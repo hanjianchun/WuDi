@@ -199,7 +199,7 @@ public class TableSample
         gridLayout.numColumns = 1;  
         composite = new Composite(viewForm, SWT.NONE);  
         composite.setLayout(gridLayout);  
-        createTable();  
+        createTable();
     }  
   
     // 创建表格  
