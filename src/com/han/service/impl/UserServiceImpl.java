@@ -40,12 +40,9 @@ public class UserServiceImpl implements IUserService {
 			int userCount = userMapper.getUserCount();
 			if(userCount != 0){
 				pageResult.setTotal(userCount);
-				List<User> userList = userMapper.getUserListByPage(pageResult.getCurPage()*30+pageResult.getCurTotal());
+				List<User> userList = userMapper.getUserListByPage(pageResult.getCurPage()*15+pageResult.getCurTotal());
 				pageResult.setList(userList);
 				pageResult.setCurTotal(userList.size());
-				
-				
-				
 			}
 		} finally {
 			sqlSession.close();

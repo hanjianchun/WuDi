@@ -14,7 +14,7 @@
 
     <!-- 这里的id必须和UserMapper接口中的接口方法名相同 -->
     <select id="getUserListByPage" resultType="User">
-        select * from user limit #{start},30
+        select * from user limit #{start},15
     </select>
     
     <delete id="delUserById" parameterType="java.lang.String">

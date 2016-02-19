@@ -41,26 +41,26 @@ public class JunitTest {
 	}
 
 	public static void getUser() {
-		SqlSessionFactory sqlSessionFactory = MyBatisUtil
-				.getSqlSessionFactory();
-		SqlSession sqlSession = sqlSessionFactory.openSession();
-		try {
-			UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-			List<User> user = userMapper.getUserListByPage();
-			for (User u : user) {
-				System.out.println(u.toString());
-			}
-		} finally {
-			sqlSession.close();
-		}
+//		SqlSessionFactory sqlSessionFactory = MyBatisUtil
+//				.getSqlSessionFactory();
+//		SqlSession sqlSession = sqlSessionFactory.openSession();
+//		try {
+//			UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+//			List<User> user = userMapper.getUserListByPage();
+//			for (User u : user) {
+//				System.out.println(u.toString());
+//			}
+//		} finally {
+//			sqlSession.close();
+//		}
 	}
 
 	@Test
 	public void get() {
 		IUserService userService = new UserServiceImpl();
-		PageResult pageResult = new PageResult();
-		PageResult p = userService.getUserListByPage(pageResult);
-		System.out.println(p);
+		for(int i = 0;i<1000;i++){
+			userService.insertUser(new User("B"+i,"3","3","3","3","3"));
+		}
 	}
 
 }
