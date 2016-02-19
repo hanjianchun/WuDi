@@ -35,6 +35,11 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;  
 import org.eclipse.swt.widgets.ToolBar;  
 import org.eclipse.swt.widgets.ToolItem;  
+/**
+ * http://blog.csdn.net/andywangcn/article/details/8117288
+ * @author Han
+ *
+ */
 public class TableSample  
 {  
   
