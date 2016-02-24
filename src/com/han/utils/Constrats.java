@@ -9,7 +9,7 @@ public class Constrats {
 	/**
 	 * 单元格个数
 	 */
-	public static int CELL_COUNT = 7;
+	public static int CELL_COUNT = 8;
 	
 	/**
 	 * 窗口是屏幕分辨率的多少

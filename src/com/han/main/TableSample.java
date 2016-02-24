@@ -102,9 +102,9 @@ public class TableSample
     {  
         toolBar = new ToolBar(viewForm, SWT.FLAT);  
         final ToolItem add = new ToolItem(toolBar, SWT.PUSH);  
-        add.setText("添加");  
+        add.setText("添加");
 //        add.setImage(new Image(toolBar.getDisplay(), "icons//add.gif"));  
-        final ToolItem del = new ToolItem(toolBar, SWT.PUSH);  
+        final ToolItem del = new ToolItem(toolBar, SWT.NONE);  
         del.setText("删除");  
 //        del.setImage(new Image(toolBar.getDisplay(), "icons//delete.gif"));  
         final ToolItem back = new ToolItem(toolBar, SWT.PUSH);  

@@ -62,5 +62,18 @@ public class JunitTest {
 			userService.insertUser(new User("B"+i,"3","3","3","3","3"));
 		}
 	}
-
+	
+	@Test
+	public void getUserById(){
+		IUserService userService = new UserServiceImpl();
+		System.out.println(userService.getUserById("40"));
+	}
+	
+	@Test
+	public void getUserByUser(){
+		IUserService userService = new UserServiceImpl();
+		User user = new User();
+		user.setUser_name("傻逼");
+		System.out.println(userService.getUserByUser(user));
+	}
 }

@@ -4,6 +4,42 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.han.dao.UserMapper">
     <!-- 这里namespace必须是UserMapper接口的路径” -->
+    
+    <sql id="_where">
+		<where>
+			1=1
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(id)">
+				and user.id = #{id}
+			</if>
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(pid)">
+				and user.pid = #{pid}
+			</if>
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(user_num)">
+				and user.user_num = #{user_num}
+			</if>
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(user_name)">
+				and user.user_name = #{user_name}
+			</if>
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(user_age)">
+				and user.user_age = #{user_age}
+			</if>
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(user_grade)">
+				and user.user_grade = #{user_grade}
+			</if>
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(user_sex)">
+				and user.user_sex = #{user_sex}
+			</if>
+			<if test="@com.han.utils.MybatisOgnl@isNotEmpty(user_money)">
+				and user.user_money = #{user_money}
+			</if>
+		</where>
+	</sql>
+    
+    <select id="getUserByUser" parameterType="User" resultType="User">
+    	select * from user 
+    	<include refid="_where"/>
+    </select>
+    
     <insert id="insertUser" parameterType="User">
         insert into user(user_num,user_name,user_age,user_grade,user_sex,user_money) values(#{user_num},#{user_name},#{user_age},#{user_grade},#{user_sex},#{user_money})
     </insert>
@@ -14,7 +50,7 @@
 
     <!-- 这里的id必须和UserMapper接口中的接口方法名相同 -->
     <select id="getUserListByPage" resultType="User">
-        select * from user limit #{start},15
+        select * from user where user_state = 1 limit #{start},#{size}
     </select>
     
     <delete id="delUserById" parameterType="java.lang.String">
@@ -23,5 +59,9 @@
     
     <select id="getUserCount" resultType="int">
     	select count(id) from user
+    </select>
+    
+    <select id="getUserById" resultType="User">
+    	select * from user where id = #{id}
     </select>
 </mapper>  

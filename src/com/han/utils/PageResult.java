@@ -4,7 +4,7 @@ import java.util.List;
 
 public class PageResult {
 	//每页记录数
-	private int size = 15;
+	private int size = 20;
 	//总页数
 	private int totalPage = 0;
 	//总记录数

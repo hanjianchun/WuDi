@@ -11,12 +11,14 @@ import com.han.utils.Constrats;
  */
 public class User implements Serializable{
 	private String id;//id
+	private String pid;//上级ID
 	private String user_num;//编号
 	private String user_name;//姓名
 	private String user_age;//年龄
 	private String user_grade;//等级
 	private String user_sex;//性别
 	private String user_money;//金额
+	private String user_state;//状态
 	public String getId() {
 		return id;
 	}
@@ -60,20 +62,32 @@ public class User implements Serializable{
 		this.user_money = user_money;
 	}
 	
+	public String getPid() {
+		return pid;
+	}
+	public void setPid(String pid) {
+		this.pid = pid;
+	}
 	
-
+	public String getUser_state() {
+		return user_state;
+	}
+	public void setUser_state(String user_state) {
+		this.user_state = user_state;
+	}
 	public User() {
 		super();
 	}
 	public String[] toStringArray(User u){
-		return new String[]{u.getId(),u.getUser_num(),u.getUser_name(),u.getUser_age(),u.getUser_grade(),u.getUser_sex().equals("0")?"男":"女",u.getUser_money()};
+		return new String[]{u.getId(),u.getPid(),u.getUser_num(),u.getUser_name(),u.getUser_age(),u.getUser_grade(),u.getUser_sex().equals("0")?"男":"女",u.getUser_money()};
 	}
+
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", user_num=" + user_num + ", user_name="
-				+ user_name + ", user_age=" + user_age + ", user_grade="
-				+ user_grade + ", user_sex=" + user_sex + ", user_money="
-				+ user_money + "]";
+		return "User [id=" + id + ", pid=" + pid + ", user_num=" + user_num
+				+ ", user_name=" + user_name + ", user_age=" + user_age
+				+ ", user_grade=" + user_grade + ", user_sex=" + user_sex
+				+ ", user_money=" + user_money + "]";
 	}
 	public User( String user_num, String user_name, String user_age,
 			String user_grade, String user_sex, String user_money) {

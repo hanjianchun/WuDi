@@ -40,7 +40,7 @@ public class UserServiceImpl implements IUserService {
 			int userCount = userMapper.getUserCount();
 			if(userCount != 0){
 				pageResult.setTotal(userCount);
-				List<User> userList = userMapper.getUserListByPage(pageResult.getCurPage()*15+pageResult.getCurTotal());
+				List<User> userList = userMapper.getUserListByPage(pageResult.getCurPage()*pageResult.getSize(),pageResult.getSize());
 				pageResult.setList(userList);
 				pageResult.setCurTotal(userList.size());
 			}
@@ -80,6 +80,32 @@ public class UserServiceImpl implements IUserService {
 			sqlSession.close();
 		}
 		return count;
+	}
+
+	@Override
+	public User getUserById(String id) {
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		User user = null;
+		try {
+			UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+			user = userMapper.getUserById(id);
+		} finally {
+			sqlSession.close();
+		}
+		return user;
+	}
+
+	@Override
+	public List<User> getUserByUser(User user) {
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		List<User> userList ;
+		try {
+			UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+			userList = userMapper.getUserByUser(user);
+		} finally {
+			sqlSession.close();
+		}
+		return userList;
 	}
 
 }

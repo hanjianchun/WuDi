@@ -11,4 +11,8 @@ public interface IUserService {
 	public int insertUser(User user);
 	public int delUserById(String id);
 	public List<User> getAllUser();
+	
+	public User getUserById(String id);
+	
+	public List<User> getUserByUser(User user);
 }

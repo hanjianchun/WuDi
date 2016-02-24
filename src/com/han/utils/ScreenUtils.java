@@ -25,6 +25,6 @@ public class ScreenUtils {
 	 * @return
 	 */
 	public static int getCellWidth(){
-		return getScreenWidth()/Constrats.CELL_COUNT-1;
+		return (getScreenWidth()-10)/Constrats.CELL_COUNT;
 	}
 }

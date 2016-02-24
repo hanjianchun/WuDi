@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
@@ -13,9 +15,17 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
@@ -27,10 +37,10 @@ import com.han.utils.ScreenUtils;
 
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.internal.PageEventAction;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Combo;
 
 /**
  * 主界面
@@ -56,92 +66,62 @@ public class MainForm {
 	}
 
 	private void createPageButton() {
-        lblPage = new Label(shell, SWT.NONE);
+        lblPage = new Label(shell, SWT.SHADOW_IN | SWT.CENTER);
         lblPage.setFont(SWTResourceManager.getFont("微软雅黑", 10, SWT.NORMAL));
         lblPage.setAlignment(SWT.CENTER);
-        lblPage.setBounds(469, 800, 464, 20);
-        formToolkit.adapt(lblPage, true, true);
-		
-        final Button nextPage = formToolkit.createButton(shell, "下一页", SWT.NONE);
-        nextPage.setBounds(217, 797, 80, 27);
-        
-        final Button prePage = formToolkit.createButton(shell, "上一页", SWT.NONE);
-        prePage.setBounds(116, 797, 80, 27);
-        
-        final Button indexPage = new Button(shell, SWT.NONE);
-        indexPage.setBounds(10, 797, 80, 27);
-        formToolkit.adapt(indexPage, true, true);
-        indexPage.setText("首页");
-        
-        final Button lastPage = new Button(shell, SWT.NONE);
-        lastPage.setBounds(316, 797, 80, 27);
-        formToolkit.adapt(lastPage, true, true);
-        lastPage.setText("尾页");
-        
-        SelectionListener listener = new SelectionListener(){
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				// 首先获得表格中所有的行  
-                TableItem[] items = table.getItems();  
-                // 循环所有行  
-                for (int i = items.length - 1; i >= 0; i--)  
-                {
-                    table.remove(i);
-                }
-				if(event.widget ==nextPage){
-					if(pageResult.getCurPage()<pageResult.getTotalPage()-1)
-						pageResult.setCurPage(pageResult.getCurPage()+1);
-				}
-				else if(event.widget == prePage){
-					if(pageResult.getCurPage()>0)
-						pageResult.setCurPage(pageResult.getCurPage()-1);
-				}
-				else if(event.widget == indexPage){
-					pageResult = new PageResult();
-				}
-				else if(event.widget == lastPage){
-					pageResult.setCurPage(pageResult.getTotalPage()-1);
-				}
-				pageResult = userService.getUserListByPage(pageResult);
-				final List<User> userList = (List<User>) pageResult.getList();
-				for (User user : userList) {
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(user.toStringArray(user));
-				}
-				table.setItemCount(userList.size());
-				
-		        lblPage.setText("共"+pageResult.getTotalPage()+"页    当前"+(pageResult.getCurPage()+1)+"页    共"+pageResult.getTotal()+"条数据    当前页有"+pageResult.getCurTotal()+"条");
-			}
-        };
-        
-        nextPage.addSelectionListener(listener);
-        prePage.addSelectionListener(listener);
-        indexPage.addSelectionListener(listener);
-        lastPage.addSelectionListener(listener);
+        lblPage.setBounds((int) (ScreenUtils.getScreenWidth()*0.71), 16, (int) (ScreenUtils.getScreenWidth()*0.28), 20);
 	}
 
+	/**
+	 * 创建工具栏
+	 */
 	private void createToolBar() {
-		ToolBar toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
-		toolBar.setBounds(4, 5, ScreenUtils.getScreenWidth()-50, 25);
+		ToolBar toolBarMenu = new ToolBar(shell, SWT.FLAT);
+		toolBarMenu.setBounds(10, 5, ScreenUtils.getScreenWidth()/4, 50);
 		
-        final ToolItem del = new ToolItem(toolBar, SWT.PUSH);  
-        del.setText("删除"); 
-//        del.setImage(new Image(toolBar.getDisplay(), "image//delete.png"));  
+        final ToolItem del = new ToolItem(toolBarMenu, SWT.PUSH);
+        del.setImage(new Image(toolBarMenu.getDisplay(), "image//delete.png"));  
+        del.setText("删  除"); 
 
-        final ToolItem edit = new ToolItem(toolBar, SWT.PUSH);  
-        edit.setText("编辑"); 
+        final ToolItem seperator_1 = new ToolItem(toolBarMenu, SWT.NONE);
+        seperator_1.setEnabled(false);
+        seperator_1.setText(" ");
+        seperator_1.setWidth(5);
         
-//        del.setImage(new Image(toolBar.getDisplay(), "image//delete.png"));  
+        
+        final ToolItem edit = new ToolItem(toolBarMenu, SWT.PUSH);  
+        edit.setText("编  辑");
+        edit.setImage(new Image(toolBarMenu.getDisplay(),"image//edit.png"));
+        
+        final ToolItem seperator_2 = new ToolItem(toolBarMenu, SWT.NONE);  
+        seperator_2.setEnabled(false);
+        seperator_2.setText(" ");
+        seperator_2.setWidth(15);
+        
+        final ToolItem check = new ToolItem(toolBarMenu, SWT.PUSH);  
+        check.setText("查看关系"); 
+        check.setImage(new Image(toolBarMenu.getDisplay(),"image//relationship.png"));
+        
+        final ToolItem seperator_3 = new ToolItem(toolBarMenu, SWT.NONE);  
+        seperator_3.setEnabled(false);
+        seperator_3.setText(" ");
+        seperator_3.setWidth(15);
+        
+        final ToolItem add = new ToolItem(toolBarMenu, SWT.PUSH);  
+        add.setText("导入Excel"); 
+        add.setImage(new Image(toolBarMenu.getDisplay(),"image//import.png"));
+        
+        final ToolItem seperator_8 = new ToolItem(toolBarMenu, SWT.NONE);  
+        seperator_8.setEnabled(false);
+        seperator_8.setText(" ");
+        seperator_8.setWidth(15);
+        
+        final ToolItem refresh = new ToolItem(toolBarMenu, SWT.PUSH);  
+        refresh.setText("刷新"); 
+        refresh.setImage(new Image(toolBarMenu.getDisplay(),"image//refresh.png"));
         
         // 工具栏按钮事件处理  
-        Listener listener = new Listener()  
+        Listener listener = new Listener()
         {  
             @Override  
             public void handleEvent(Event event)  
@@ -149,8 +129,9 @@ public class MainForm {
                 // 如果单击删除按钮  
                 if (event.widget == del)  
                 {
+                	int count = 0;
                     // 首先获得表格中所有的行  
-                    TableItem[] items = table.getItems();  
+                    TableItem[] items = table.getItems();
                     // 循环所有行  
                     for (int i = items.length - 1; i >= 0; i--)  
                     {
@@ -166,19 +147,221 @@ public class MainForm {
                         // items[index].dispose();
                         if(userService.delUserById(items[i].getText()) == 1){
                         	table.remove(index);
+                        	count++;
                         }
+                    }
+                    if(count==0){
+                    	 MessageBox dialog=new MessageBox(shell,SWT.OK|SWT.ICON_INFORMATION);
+                         dialog.setText("无敌提示");
+                         dialog.setMessage("请勾选需要删除的记录！");
+                         dialog.open();
                     }
                 }
                 //单击修改按钮
                 else if(event.widget == edit){
-                	
+            		try {
+	        			Display display = Display.getDefault();
+	        			EditForm shell = new EditForm(display);
+	        			shell.open();
+	        			shell.layout();
+	        			while (!shell.isDisposed()) {
+	        				if (!display.readAndDispatch()) {
+	        					display.sleep();
+	        				}
+	        			}
+	        		} catch (Exception e) {
+	        			e.printStackTrace();
+	        		}
                 }
-            }  
-  
-        };  
+                
+                else if(event.widget == add){
+                	//打开对话框
+                	ImportForm imp = new ImportForm(shell);
+                	imp.open();
+                }
+                
+                else if(event.widget == refresh){
+                	// 首先获得表格中所有的行  
+                    TableItem[] items = table.getItems();  
+                    // 循环所有行  
+                    for (int i = items.length - 1; i >= 0; i--)  
+                    {
+                        table.remove(i);
+                    }
+                	
+                	pageResult = userService.getUserListByPage(pageResult);
+    				final List<User> userList = (List<User>) pageResult.getList();
+    				String []strArray;
+    				for (User user : userList) {
+    					TableItem item = new TableItem(table, SWT.NONE);
+    					strArray = user.toStringArray(user);
+    					User pUser  = userService.getUserById(strArray[1]);
+    					if(!user.getPid().equals("0")){
+    						strArray[1] = pUser.getUser_name();
+    					}
+    					item.setText(strArray);
+    				}
+    				
+    				table.setItemCount(userList.size());
+    				
+    		        lblPage.setText("共"+pageResult.getTotalPage()+"页    当前第"+(pageResult.getCurPage()+1)+"页     共"+pageResult.getTotal()+"条    当前有"+pageResult.getCurTotal()+"条");
+
+                }
+            }
+        };
         // 为工具栏的按钮注册事件  
         del.addListener(SWT.Selection, listener);
+        add.addListener(SWT.Selection, listener);
+        check.addListener(SWT.Selection, listener);
+        refresh.addListener(SWT.Selection, listener);
+        edit.addListener(SWT.Selection, listener);
         
+        
+        
+        textSearch = new Text(shell, SWT.BORDER | SWT.SEARCH);
+        textSearch.setText("输入姓名搜索");
+        textSearch.setBounds(ScreenUtils.getScreenWidth()/4+30, 16, 100, 25);
+//        formToolkit.adapt(textSearch, true, true);
+        textSearch.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if(textSearch.getText().toString().trim().equals("")){
+					textSearch.setText("输入姓名搜索");
+				}
+			}
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if(textSearch.getText().toString().trim().equals("输入姓名搜索")){
+					textSearch.setText("");
+				}
+			}
+		});
+        textSearch.addTraverseListener(new TraverseListener() {
+			@Override
+			public void keyTraversed(TraverseEvent e) {
+				if(e.keyCode == 13){
+					e.doit = true;
+					// 首先获得表格中所有的行  
+                    TableItem[] items = table.getItems();  
+                    // 循环所有行  
+                    for (int i = items.length - 1; i >= 0; i--)  
+                    {
+                        table.remove(i);
+                    }
+    				String []strArray;
+    				User u = new User();
+    				u.setUser_name(textSearch.getText().toString());
+    				List<User> userList = userService.getUserByUser(u);
+    				for (User user : userList) {
+    					TableItem item = new TableItem(table, SWT.NONE);
+    					strArray = user.toStringArray(user);
+    					User pUser  = userService.getUserById(strArray[1]);
+    					if(!user.getPid().equals("0")){
+    						strArray[1] = pUser.getUser_name();
+    					}
+    					item.setText(strArray);
+    				}
+    				
+    				table.setItemCount(userList.size());
+				}
+			}
+		});
+        
+        
+		final Combo combo = new Combo(shell, SWT.NONE | SWT.READ_ONLY);
+		combo.setBounds(674, 16, 60, 25);
+		formToolkit.adapt(combo);
+		formToolkit.paintBordersFor(combo);
+		combo.setItems(new String[]{"10","20","30","40","50"});
+		combo.select(1);
+		combo.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				pageResult.setSize(Integer.valueOf(combo.getText()));
+				pageResult.setCurPage(0);
+				addTableData();
+				
+				table.setFocus();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				
+			}
+		});
+        //==============================================分页工具栏====================================================================================
+	
+        ToolBar toolBarPage = new ToolBar(shell, SWT.FLAT);
+        toolBarPage.setBounds(ScreenUtils.getScreenWidth()/2, 5, ScreenUtils.getScreenWidth()/4, 50);
+//        formToolkit.adapt(toolBarPage);
+//        formToolkit.paintBordersFor(toolBarPage);
+        
+        final ToolItem indexPage = new ToolItem(toolBarPage, SWT.PUSH);
+        indexPage.setImage(new Image(toolBarPage.getDisplay(), "image//indexPage.png"));  
+        indexPage.setText("首页"); 
+        
+        final ToolItem seperator_4 = new ToolItem(toolBarPage, SWT.NONE);  
+        seperator_4.setWidth(15);
+        seperator_4.setText("  ");
+        seperator_4.setEnabled(false);
+        
+        final ToolItem prePage = new ToolItem(toolBarPage, SWT.PUSH);
+        prePage.setImage(new Image(toolBarPage.getDisplay(), "image//prePage.png"));  
+        prePage.setText("上一页"); 
+        
+        final ToolItem seperator_5 = new ToolItem(toolBarPage, SWT.NONE);  
+        seperator_5.setWidth(15);
+        seperator_5.setText("  ");
+        seperator_5.setEnabled(false);
+        
+        final ToolItem nextPage = new ToolItem(toolBarPage, SWT.PUSH);
+        nextPage.setImage(new Image(toolBarPage.getDisplay(), "image//nextPage.png"));  
+        nextPage.setText("下一页"); 
+        
+        final ToolItem seperator_6 = new ToolItem(toolBarPage, SWT.NONE);  
+        seperator_6.setWidth(15);
+        seperator_6.setText("  ");
+        seperator_6.setEnabled(false);
+        
+        final ToolItem lastPage = new ToolItem(toolBarPage, SWT.PUSH);
+        lastPage.setImage(new Image(toolBarPage.getDisplay(), "image//lastPage.png"));  
+        lastPage.setText("尾页");
+        
+        Listener pageListener = new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+//				if(event.widget == indexPage){
+//					
+//				}
+
+				if(event.widget ==nextPage){
+					if(pageResult.getCurPage()<pageResult.getTotalPage()-1)
+						pageResult.setCurPage(pageResult.getCurPage()+1);
+				}
+				else if(event.widget == prePage){
+					if(pageResult.getCurPage()>0)
+						pageResult.setCurPage(pageResult.getCurPage()-1);
+				}
+				else if(event.widget == indexPage){
+					pageResult = new PageResult();
+					pageResult.setSize(Integer.valueOf(combo.getText()));
+				}
+				else if(event.widget == lastPage){
+					pageResult.setCurPage(pageResult.getTotalPage()-1);
+				}
+				
+				addTableData();
+			}
+		};
+        
+        // 为工具栏的按钮注册事件  
+        indexPage.addListener(SWT.Selection, pageListener);
+        prePage.addListener(SWT.Selection, pageListener);
+        nextPage.addListener(SWT.Selection, pageListener);
+        lastPage.addListener(SWT.Selection, pageListener);
 	}
 
 	/**
@@ -203,6 +386,9 @@ public class MainForm {
 		createContents();
 		shell.open();
 		shell.layout();
+		shell.setLocation(Display.getCurrent().getClientArea().width / 2 - shell.getShell().getSize().x/2, Display.getCurrent()  
+                .getClientArea().height / 2 - shell.getSize().y/2);
+		
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -214,26 +400,27 @@ public class MainForm {
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
-		shell = new Shell();
+		Display display = Display.getDefault();
+		shell = new Shell(display,SWT.CLOSE);
+		shell.setImage(SWTResourceManager.getImage("image//fish.png"));
 		shell.setSize(ScreenUtils.getScreenWidth(),
 				ScreenUtils.getScreenHeight());
-		shell.setText("无敌");
+		shell.setText("无敌是多么寂寞");
 		createViewForm();
 	}
-
 	private ViewForm viewForm = null;
 	private Composite composite = null;
 	private Table table;
 	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
+	private Text textSearch;
 
 	/**
 	 * 1.创建ViewFrom
 	 */
 	private void createViewForm() {
 		viewForm = new ViewForm(shell, SWT.NONE);
-		viewForm.setBounds(0, 30, ScreenUtils.getScreenWidth(),
-				ScreenUtils.getScreenHeight()-100);
-
+		viewForm.setBounds(0, 50, ScreenUtils.getScreenWidth(),
+				ScreenUtils.getScreenHeight()-80);
 		
 		createPageButton();
 		
@@ -242,9 +429,7 @@ public class MainForm {
 		
 		createToolBar();
 		
-		
 	}
-
 	/**
 	 * 2.创建Composite
 	 */
@@ -281,7 +466,12 @@ public class MainForm {
 				SWT.NONE);
 		newColumnTableColumn_ID.setWidth(ScreenUtils.getCellWidth());
 		newColumnTableColumn_ID.setText("ID");
-
+		
+		final TableColumn newColumnTableColumn_PID = new TableColumn(table,
+				SWT.NONE);
+		newColumnTableColumn_PID.setWidth(ScreenUtils.getCellWidth());
+		newColumnTableColumn_PID.setText("PID");
+		
 		final TableColumn newColumnTableColumn_NUM = new TableColumn(table,
 				SWT.NONE);
 		newColumnTableColumn_NUM.setWidth(ScreenUtils.getCellWidth());
@@ -312,15 +502,35 @@ public class MainForm {
 		newColumnTableColumn_MONEY.setWidth(ScreenUtils.getCellWidth());
 		newColumnTableColumn_MONEY.setText("金额");
 
-		
+        addTableData();
+	}
+	/**
+	 * table里添加数据
+	 */
+	public void addTableData(){
+		// 首先获得表格中所有的行  
+        TableItem[] items = table.getItems();  
+        // 循环所有行  
+        for (int i = items.length - 1; i >= 0; i--)  
+        {
+            table.remove(i);
+        }
 		
 		pageResult = userService.getUserListByPage(pageResult);
 		final List<User> userList = (List<User>) pageResult.getList();
+		String []strArray;
 		for (User user : userList) {
 			TableItem item = new TableItem(table, SWT.NONE);
-			item.setText(user.toStringArray(user));
+			strArray = user.toStringArray(user);
+			User pUser  = userService.getUserById(strArray[1]);
+			if(!user.getPid().equals("0")){
+				strArray[1] = pUser.getUser_name();
+			}
+			item.setText(strArray);
 		}
 		
-        lblPage.setText("共"+pageResult.getTotalPage()+"页    当前"+(pageResult.getCurPage()+1)+"页    共"+pageResult.getTotal()+"条数据    当前页有"+pageResult.getCurTotal()+"条");
+        lblPage.setText("共"+pageResult.getTotalPage()+"页    当前第"+(pageResult.getCurPage()+1)+"页    共"+pageResult.getTotal()+"条    当前有"+pageResult.getCurTotal()+"条");
+
 	}
+	
 }

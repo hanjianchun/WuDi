@@ -26,5 +26,9 @@
 	<classpathentry kind="lib" path="src/lib/slf4j-log4j12-1.7.5.jar"/>
 	<classpathentry kind="lib" path="src/lib/mybatis-3.2.2.jar"/>
 	<classpathentry kind="lib" path="src/lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="src/lib/poi-3.9.jar"/>
+	<classpathentry kind="lib" path="src/lib/poi-ooxml-3.9.jar"/>
+	<classpathentry kind="lib" path="src/lib/poi-ooxml-schemas-3.9.jar"/>
+	<classpathentry kind="lib" path="src/lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
