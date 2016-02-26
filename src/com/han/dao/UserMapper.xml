@@ -41,8 +41,14 @@
     </select>
     
     <insert id="insertUser" parameterType="User">
-        insert into user(user_num,user_name,user_age,user_grade,user_sex,user_money) values(#{user_num},#{user_name},#{user_age},#{user_grade},#{user_sex},#{user_money})
+	    insert into user(user_num,user_name,user_age,user_grade,user_sex,user_money) values(#{user_num},#{user_name},#{user_age},#{user_grade},#{user_sex},#{user_money})
     </insert>
+    
+    <update id="updateUser" parameterType="User">
+	    update user
+	    	set pid=#{pid},user_num=#{user_num},user_name=#{user_name},user_age=#{user_age},user_grade=#{user_grade},user_sex=#{user_sex},user_money=#{user_money},user_state=#{user_state}
+	    where id = #{id}
+    </update>
     
     <select id="getAllUser" resultType="User">
     	select * from user
@@ -50,7 +56,7 @@
 
     <!-- 这里的id必须和UserMapper接口中的接口方法名相同 -->
     <select id="getUserListByPage" resultType="User">
-        select * from user where user_state = 1 limit #{start},#{size}
+        select * from user where user_state = 1 order by user_grade limit #{start},#{size} 
     </select>
     
     <delete id="delUserById" parameterType="java.lang.String">

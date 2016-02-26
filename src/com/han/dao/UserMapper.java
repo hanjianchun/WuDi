@@ -48,4 +48,6 @@ public interface UserMapper {
 	 * @return
 	 */
 	public int getUserCount();
+	
+	public void updateUser(User user);
 }

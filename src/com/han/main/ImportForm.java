@@ -18,6 +18,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import com.han.utils.ExcelUtils;
+import com.han.utils.SafeSaveDialogUp;
+
 public class ImportForm extends Dialog implements SelectionListener{
 
 	
@@ -90,14 +93,11 @@ public class ImportForm extends Dialog implements SelectionListener{
 		new Label(container, SWT.NONE);
 		
 		lblWarning = new Label(container, SWT.NONE);
+		lblWarning.setAlignment(SWT.CENTER);
+		lblWarning.setText("                                  ");
+		lblWarning.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 7, 1));
 		lblWarning.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		lblWarning.setFont(SWTResourceManager.getFont("微软雅黑", 9, SWT.NORMAL));
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
 		btnSearch.addSelectionListener(ImportForm.this);
 		return container;
 	}
@@ -108,8 +108,8 @@ public class ImportForm extends Dialog implements SelectionListener{
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		importOK = createButton(parent, IDialogConstants.OK_ID, "导入",
-				true);
+		importOK = createButton(parent, IDialogConstants.YES_ID, "导入",
+				false);
 		importOK.setTouchEnabled(true);
 		importOK.addSelectionListener(ImportForm.this);
 		createButton(parent, IDialogConstants.CANCEL_ID,
@@ -137,15 +137,22 @@ public class ImportForm extends Dialog implements SelectionListener{
 	    	fileSelect.setFilterNames(new String[]{"*.xls","*.xlsx"});   
 	    	fileSelect.setFilterExtensions(new String[]{"*.xls","*.xlsx"});   
 	    	url=fileSelect.open();
-	    	if(url != null)
+	    	if(url != null){
 	    		text.setText(url);
+	    		lblWarning.setText("");
+	    	}
 		}
 		else if(event.widget == btnDownload){
-			
+			SafeSaveDialogUp s = new SafeSaveDialogUp();
+			s.openSaveFileDialog("User");
 		}
 		else if(event.widget == importOK){
 			if(text.getText().toString().trim()==""){
 				lblWarning.setText("请选择需要导入的Excel");
+			}else{
+				String path = text.getText().toString().trim();
+				ImportForm.this.close();
+				ExcelUtils.insertExcel(parentShell,path);
 			}
 		}
 	}

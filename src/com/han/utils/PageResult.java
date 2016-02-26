@@ -15,7 +15,9 @@ public class PageResult {
 	private int curTotal = 0;
 	
 	private List<?> list = null;
-
+	
+	private Object o;
+	
 	public List<?> getList() {
 		return list;
 	}

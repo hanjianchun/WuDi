@@ -17,6 +17,7 @@ import com.han.service.IUserService;
 import com.han.service.impl.UserServiceImpl;
 import com.han.utils.MyBatisUtil;
 import com.han.utils.PageResult;
+import com.han.utils.SafeSaveDialogUp;
 import com.han.utils.ScreenUtils;
 
 /**
@@ -57,16 +58,18 @@ public class JunitTest {
 
 	@Test
 	public void get() {
-		IUserService userService = new UserServiceImpl();
-		for(int i = 0;i<1000;i++){
-			userService.insertUser(new User("B"+i,"3","3","3","3","3"));
-		}
+//		IUserService userService = new UserServiceImpl();
+//		for(int i = 0;i<1000;i++){
+//			userService.insertUser(new User("B"+i,"3","3","3","3","3"));
+//		}
 	}
 	
 	@Test
 	public void getUserById(){
 		IUserService userService = new UserServiceImpl();
-		System.out.println(userService.getUserById("40"));
+		User u = new User();
+		u.setUser_name("刘1欢");
+		System.out.println(userService.getUserByUser(u));
 	}
 	
 	@Test
@@ -76,4 +79,5 @@ public class JunitTest {
 		user.setUser_name("傻逼");
 		System.out.println(userService.getUserByUser(user));
 	}
+	
 }

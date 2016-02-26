@@ -1,5 +1,6 @@
 package com.han.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -108,4 +109,46 @@ public class UserServiceImpl implements IUserService {
 		return userList;
 	}
 
+	@Override
+	public String addUserList(List<User> userList) {
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		List<User> haveUser = new ArrayList<User>();
+		try {
+			for(User user : userList){
+				UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+				User userParam = new User();
+				userParam.setUser_name(user.getUser_name());
+				List<User> userAll = getUserByUser(user);
+				if(null == userAll || userAll.size()==0)
+					userMapper.insertUser(user);
+				else
+					haveUser.add(user);
+			}
+			sqlSession.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			sqlSession.rollback();
+			return "导入失败，请检查文件格式是否正确！";
+		} finally {
+			sqlSession.close();
+		}
+		String msg = "";
+		if(haveUser.size()==0)
+			msg = "新增"+(userList.size()-haveUser.size())+"个";
+		else
+			msg = "新增"+(userList.size()-haveUser.size())+"个,有"+haveUser.size()+"个已经存在重名已忽略！";
+		return msg;
+	}
+
+	@Override
+	public void updateUser(User user) {
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		try {
+			UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+			userMapper.updateUser(user);
+			sqlSession.commit();
+		} finally {
+			sqlSession.close();
+		}
+	}
 }
